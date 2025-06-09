@@ -86,3 +86,48 @@ def getinfo():
 
 	cur.close()
 	conn.close()
+
+def single_user_description(name, description):
+    conn = psycopg2.connect(
+        dbname="test",
+        user="postgres",
+        password="postgres",
+        host="localhost",
+        port=5432
+    )
+    cur = conn.cursor()
+
+    cur.execute("""
+        INSERT INTO users (name, description, url)
+        VALUES (%s, %s, NULL)
+        RETURNING id;
+    """, (name, description))
+
+    user_id = cur.fetchone()[0]
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    print(f"✅ User added with ID {user_id}")
+    return user_id
+
+def update_user_url(user_id, url):
+    conn = psycopg2.connect(
+        dbname="test",
+        user="postgres",
+        password="postgres",
+        host="localhost",
+        port=5432
+    )
+    cur = conn.cursor()
+
+    cur.execute("""
+        UPDATE users
+        SET url = %s
+        WHERE id = %s;
+    """, (url, user_id))
+
+    conn.commit()
+    cur.close()
+    conn.close()
+    print(f"✅ URL updated for ID {user_id} to {url}")
