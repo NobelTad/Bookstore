@@ -46,5 +46,12 @@ def upload():
         'json_file': json_filename
     }), 200
 
+
+#the fileserving mechanizm
+@app.route('/download/<filename>', methods=['GET'])
+def download_file(filename):
+    safe_name = secure_filename(filename)
+    return send_from_directory(UPLOAD_FOLDER, safe_name, as_attachment=True)
+
 if __name__ == '__main__':
     app.run(debug=True)
