@@ -1,0 +1,39 @@
+<input type="file" id="pdfFile" />
+<button onclick="upload()">Upload</button>
+
+<script>
+  async function upload() {
+    const fileInput = document.getElementById('pdfFile');
+    const file = fileInput.files[0];
+
+    if (!file || file.type !== "application/pdf") {
+      alert("Please select a PDF file.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    // Your JSON data
+    const jsonData = {
+      name: "Nobel",
+      project: "FlaskAPI"
+    };
+
+    formData.append("json", JSON.stringify(jsonData));
+
+    try {
+      const response = await fetch("http://localhost:5000/upload", {
+        method: "POST",
+        body: formData
+      });
+
+      const result = await response.json();
+      console.log(result);
+      alert(result.message || result.error);
+    } catch (err) {
+      console.error("Upload failed:", err);
+      alert("Failed to upload");
+    }
+  }
+</script>
