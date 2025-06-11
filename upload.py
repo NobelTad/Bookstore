@@ -4,7 +4,7 @@ import json
 from datetime import datetime
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
-from pos import generate_poster  # your poster generator
+from gen_pos import generate_poster  # your poster generator
 
 app = Flask(__name__)
 CORS(app)
