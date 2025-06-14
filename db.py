@@ -16,7 +16,7 @@ def create():
 	cur.execute("""
 	    CREATE TABLE IF NOT EXISTS data (
 	        id SERIAL PRIMARY KEY,
-	        name TEXT NOT NULL,
+	        name TEXT ,
 	        description TEXT,
 	        url TEXT,
 	        poster TEXT
@@ -89,53 +89,34 @@ def getinfo():
 
 	cur.close()
 	conn.close()
+def insert_book(name, description, url, poster):
+    if not all([name, description, url, poster]):
+        raise ValueError("All fields (name, description, url, poster) must be provided and non-empty")
 
-def insert_url_and_poster(url, poster):
-    conn = psycopg2.connect(
-        dbname="test",
-        user="postgres",
-        password="postgres",
-        host="localhost",
-        port=5432
-    )
-    cur = conn.cursor()
-
-    cur.execute("""
+    try:
+        conn = psycopg2.connect(
+            dbname="postgres",  # change if needed
+            user="postgres",    # your username
+            password="your_password",  # replace with actual
+            host="localhost",   # or your host IP
+            port="5432"         # default PostgreSQL port
+        )
+        cur = conn.cursor()
+        query = """
         INSERT INTO data (name, description, url, poster)
-        VALUES (NULL, NULL, %s, %s)
+        VALUES (%s, %s, %s, %s)
         RETURNING id;
-    """, (url, poster))
+        """
+        cur.execute(query, (name, description, url, poster))
+        new_id = cur.fetchone()[0]
+        conn.commit()
+        cur.close()
+        conn.close()
+        return new_id
 
-    user_id = cur.fetchone()[0]
-    conn.commit()
-    cur.close()
-    conn.close()
-
-    print(f"✅ URL and Poster added with ID {user_id}")
-    return user_id
-
-def update_name_and_description(user_id, name, description):
-    conn = psycopg2.connect(
-        dbname="test",
-        user="postgres",
-        password="postgres",
-        host="localhost",
-        port=5432
-    )
-    cur = conn.cursor()
-
-    cur.execute("""
-        UPDATE data
-        SET name = %s, description = %s
-        WHERE id = %s;
-    """, (name, description, user_id))
-
-    conn.commit()
-    cur.close()
-    conn.close()
-
-    print(f"✅ Name and Description updated for ID {user_id}")
-
+    except Exception as e:
+        print("Insert failed:", e)
+        return None
 def delete_table():
     conn = psycopg2.connect(
         dbname="test",
@@ -146,4 +127,4 @@ def delete_table():
     )
     cur = conn.cursor()
     cur.execute("DROP TABLE IF EXISTS data")
-insert("1","2","3","4")
+update_name_and_description(1, "nn","dd")
