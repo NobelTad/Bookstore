@@ -1,10 +1,10 @@
-from flask import Flask, request, jsonify,send_from_directory
+from flask import Flask, request, jsonify, send_from_directory
 import os
 import json
 from datetime import datetime
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
-from gen_pos import generate_poster  # your poster generator
+from pos import generate_poster  # your poster generator
 
 app = Flask(__name__)
 CORS(app)
@@ -13,6 +13,7 @@ UPLOAD_FOLDER = 'uploads'
 DATA_FOLDER = 'data'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(DATA_FOLDER, exist_ok=True)
+
 @app.route('/upload', methods=['POST'])
 def upload():
     if 'file' not in request.files or 'json' not in request.form:
@@ -27,10 +28,14 @@ def upload():
     except Exception as e:
         return jsonify({'error': f'Invalid JSON data: {str(e)}'}), 400
 
-    required_fields = ['name', 'description', 'url']
+    # Only require name and description
+    required_fields = ['name', 'description']
     missing_or_empty = [field for field in required_fields if field not in data or not data[field]]
     if missing_or_empty:
         return jsonify({'error': f'Missing or empty fields in JSON: {missing_or_empty}'}), 400
+
+    # Remove 'url' if present (optional but clean)
+    data.pop('url', None)
 
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S%f")
     pdf_filename = f"{timestamp}.pdf"
@@ -60,7 +65,6 @@ def upload():
     }), 200
 
 
-#the fileserving mechanizm
 @app.route('/download/<filename>', methods=['GET'])
 def download_file(filename):
     safe_name = secure_filename(filename)
