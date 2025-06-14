@@ -65,10 +65,15 @@ def upload():
     }), 200
 
 
-@app.route('/download/<filename>', methods=['GET'])
-def download_file(filename):
-    safe_name = secure_filename(filename)
-    return send_from_directory(UPLOAD_FOLDER, safe_name, as_attachment=True)
+@app.route('/download/<path:filepath>', methods=['GET'])
+def download_file(filepath):
+    safe_path = secure_filename(os.path.basename(filepath))
+    full_path = os.path.join(UPLOAD_FOLDER, filepath)
+
+    if not os.path.isfile(full_path):
+        return jsonify({'error': 'File not found'}), 404
+
+    return send_from_directory(UPLOAD_FOLDER, filepath, as_attachment=True)
 
 if __name__ == '__main__':
     app.run(debug=True)
