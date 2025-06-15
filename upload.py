@@ -6,10 +6,10 @@ from werkzeug.utils import secure_filename
 from flask_cors import CORS
 from pos import generate_poster
 from db import insert_book  # import here
-
+from db import getrows
 app = Flask(__name__)
 CORS(app)
-
+from db import getinfo
 UPLOAD_FOLDER = 'uploads'
 DATA_FOLDER = 'data'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -73,7 +73,28 @@ def upload():
         'poster_name': poster_path_rel,
         'db_id': book_id
     }), 200
+@app.route('/rows')
+def rows():
+    data = getrows()
+    return jsonify(data)
 
+@app.route('/fetch/<int:page>')
+def fetch_page(page):
+    per_page = 20
+
+    # Call your getinfo() that returns JSON string of all rows
+    all_data_json = getinfo()
+
+    # Parse JSON string into Python list of dicts
+    all_data = json.loads(all_data_json)
+
+    start = (page - 1) * per_page
+    end = start + per_page
+
+    # Slice the data for current page
+    page_data = all_data[start:end]
+
+    return jsonify(page_data)
 # your /download endpoint remains unchanged
 
 if __name__ == '__main__':

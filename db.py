@@ -68,7 +68,7 @@ def getinfo():
 	cur = conn.cursor()
 
 	# Fetch all rows
-	cur.execute("SELECT id, name, description, url , poster  FROM data")
+	cur.execute("SELECT id, name, description, url , poster FROM data ORDER BY id ASC")
 	rows = cur.fetchall()
 
 	# Format as list of dicts
