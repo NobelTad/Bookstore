@@ -150,4 +150,27 @@ def getrows():
     conn.close()
 
     return num_rows
-print(getrows())
+def reset_table():
+    try:
+        conn = psycopg2.connect(
+            dbname="test",
+            user="postgres",
+            password="postgres",
+            host="localhost",
+            port="5432"
+        )
+        cur = conn.cursor()
+        
+        # Delete all rows
+        cur.execute("DELETE FROM data;")
+        
+        # Reset the id sequence, replace 'data_id_seq' with your actual sequence name if different
+        cur.execute("ALTER SEQUENCE data_id_seq RESTART WITH 1;")
+        
+        conn.commit()
+        cur.close()
+        conn.close()
+        print("Table reset successfully!")
+    except Exception as e:
+        print("Reset failed:", e)
+        
