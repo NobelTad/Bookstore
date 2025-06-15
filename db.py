@@ -95,9 +95,9 @@ def insert_book(name, description, url, poster):
 
     try:
         conn = psycopg2.connect(
-            dbname="postgres",  # change if needed
+            dbname="test",  # change if needed
             user="postgres",    # your username
-            password="your_password",  # replace with actual
+            password="postgres",  # replace with actual
             host="localhost",   # or your host IP
             port="5432"         # default PostgreSQL port
         )
@@ -127,4 +127,27 @@ def delete_table():
     )
     cur = conn.cursor()
     cur.execute("DROP TABLE IF EXISTS data")
-update_name_and_description(1, "nn","dd")
+def getrows(): 
+    # Connect to the database
+    conn = psycopg2.connect(
+        dbname="test",
+        user="postgres",
+        password="postgres",
+        host="localhost",
+        port=5432
+    )
+
+    cur = conn.cursor()
+
+    # Fetch all rows
+    cur.execute("SELECT id, name, description, url, poster FROM data")
+    rows = cur.fetchall()
+
+    # Get number of rows
+    num_rows = len(rows)
+
+    cur.close()
+    conn.close()
+
+    return num_rows
+print(getrows())
