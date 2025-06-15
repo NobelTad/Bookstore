@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory,abort
 import os
 import json
 from datetime import datetime
@@ -96,6 +96,15 @@ def fetch_page(page):
 
     return jsonify(page_data)
 # your /download endpoint remains unchanged
-
+@app.route('/files/<path:filename>')
+def serve_file(filename):
+    # Securely join the path to prevent directory traversal attacks
+    full_path = os.path.join(UPLOAD_FOLDER, filename)
+    
+    # Check if the file exists and is inside UPLOAD_FOLDER
+    if os.path.isfile(full_path) and os.path.commonpath([os.path.abspath(full_path), os.path.abspath(UPLOAD_FOLDER)]) == os.path.abspath(UPLOAD_FOLDER):
+        return send_from_directory(UPLOAD_FOLDER, filename)
+    else:
+        abort(404)
 if __name__ == '__main__':
     app.run(debug=True)
