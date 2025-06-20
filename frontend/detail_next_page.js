@@ -28,90 +28,214 @@ export default function Details() {
   return (
     <div className="card">
       <div className="poster-wrapper">
-        <img src={data.poster} alt="Poster" className="poster" />
+        <img
+          src={data.poster || '/default-book-cover.jpg'}
+          alt={data.name || 'Cover'}
+          className="poster"
+          loading="lazy"
+        />
       </div>
       <div className="content">
-        <h1 className="title">{data.name}</h1>
-        <p className="desc">{data.description}</p>
-        <a href={data.url} download className="download-btn">⬇ Download PDF</a>
+        <div className="title-desc-wrapper">
+          <h1 className="title">{data.name}</h1>
+          <div className="vertical-line" />
+          <p className="desc">{data.description}</p>
+        </div>
+
+        <a
+          href={data.url}
+          download
+          className="download-btn"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          ⬇ Download PDF
+        </a>
       </div>
 
       <style jsx>{`
         .card {
           display: flex;
-          max-width: 100vw;
-          height: 450px; /* fixed height */
-          margin: 40px auto;
-          background: #fff;
-          border-radius: 16px;
-          box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+          max-width: 936px;
+          height: 364px;
+          margin: 60px 0 60px 0;
+          background: #ffffff;
+          border-radius: 18px;
+          box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
           overflow: hidden;
-          font-family: Arial, sans-serif;
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          align-items: center;
+          padding-right: 40px;
+          padding-left: 0;
         }
+
         .poster-wrapper {
-          flex: 0 0 45%;
+          flex: 0 0 286px;
+          height: 364px;
+          background: #f7f8fa;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           overflow: hidden;
+          border-radius: 18px 0 0 18px;
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+          margin-right: 40px;
+          margin-left: 0;
         }
+
         .poster {
-          width: 100%;
-          height: 100%;
+          width: 234px;
+          height: 338px;
           object-fit: cover;
-          display: block;
+          border-radius: 12px;
+          transition: transform 0.3s ease;
         }
+
+        .poster:hover {
+          transform: scale(1.05);
+        }
+
         .content {
           flex: 1;
-          padding: 30px 40px;
           display: flex;
           flex-direction: column;
           justify-content: center;
-        }
-        .title {
-          font-size: 2.5rem;
-          margin-bottom: 20px;
-          color: #222;
-        }
-        .desc {
-          font-size: 1.2rem;
-          color: #555;
-          flex-grow: 1;
-          margin-bottom: 30px;
-        }
-        .download-btn {
-          align-self: flex-start;
-          padding: 14px 28px;
-          background: #0070f3;
-          color: white;
-          border-radius: 12px;
-          text-decoration: none;
-          font-weight: 600;
-          font-size: 1.1rem;
-          transition: background 0.3s;
-        }
-        .download-btn:hover {
-          background: #0059c1;
-        }
-        .loading,
-        .error {
-          text-align: center;
-          font-size: 1.5rem;
-          margin-top: 3rem;
+          align-items: flex-start;
+          position: relative;
+          color: #1e1e1e;
+          max-height: 364px;
+          overflow: hidden;
+          padding-right: 0;
         }
 
-        /* Responsive for smaller screens */
-        @media (max-width: 768px) {
+        .title-desc-wrapper {
+          display: flex;
+          align-items: center;
+          gap: 20px; /* space between title, line and description */
+          max-height: 280px;
+          overflow: hidden;
+        }
+
+        .title {
+          font-size: 2.86rem;
+          font-weight: 700;
+          color: #222;
+          margin: 0;
+          letter-spacing: 0.03em;
+          user-select: text;
+          white-space: nowrap;
+          flex-shrink: 0;
+          max-width: 45%; /* prevent title from overflowing */
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .vertical-line {
+          width: 1px;
+          height: 60px;
+          background: #ccc;
+          border-radius: 1px;
+          flex-shrink: 0;
+        }
+
+        .desc {
+          font-size: 1.3rem;
+          line-height: 1.6;
+          color: #555;
+          user-select: text;
+          overflow: hidden;
+          max-height: 140px;
+          text-overflow: ellipsis;
+          white-space: pre-wrap;
+          margin: 0;
+          flex-grow: 1;
+        }
+
+        .download-btn {
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          padding: 16px 36px;
+          background: #0070f3;
+          color: white;
+          font-weight: 600;
+          border-radius: 50px; /* full pill shape */
+          text-decoration: none;
+          font-size: 1.3rem;
+          box-shadow: 0 8px 20px rgba(0, 112, 243, 0.4);
+          transition: background-color 0.3s ease;
+          user-select: none;
+          cursor: pointer;
+        }
+
+        .download-btn:hover {
+          background: #005bb5;
+          box-shadow: 0 12px 30px rgba(0, 91, 181, 0.6);
+        }
+
+        .loading,
+        .error {
+          max-width: 780px;
+          margin: 160px auto;
+          font-size: 2.08rem;
+          text-align: center;
+          color: #666;
+          font-weight: 600;
+          user-select: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
           .card {
             flex-direction: column;
+            max-width: 90vw;
             height: auto;
+            padding: 20px;
+            margin-left: 0;
           }
           .poster-wrapper {
-            flex: none;
-            height: 300px;
+            margin-right: 0;
+            width: 100%;
+            height: auto;
+            border-radius: 18px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
           }
           .poster {
-            height: 100%;
+            width: auto;
+            max-height: 338px;
+            border-radius: 12px;
+            transform: none !important;
+            display: block;
+            margin: 0 auto;
           }
           .content {
-            padding: 20px;
+            max-height: none;
+            padding: 20px 0 50px;
+            position: relative;
+            align-items: flex-start;
+          }
+          .title-desc-wrapper {
+            flex-direction: column;
+            gap: 12px;
+          }
+          .title {
+            max-width: 100%;
+            font-size: 2rem;
+            white-space: normal;
+          }
+          .vertical-line {
+            display: none;
+          }
+          .desc {
+            max-height: none;
+            font-size: 1.1rem;
+          }
+          .download-btn {
+            bottom: 0;
+            right: 0;
+            padding: 14px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
           }
         }
       `}</style>
